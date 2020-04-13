@@ -1,16 +1,17 @@
 package com.example.correctandincorrectanweranimation
 
 import android.animation.TimeAnimator
-import android.content.Intent
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.LayerDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.get
 import kotlinx.android.synthetic.main.activity_main.*
-import java.time.Duration
 import kotlin.math.min
 
 class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
     var mAnimator: TimeAnimator? = null
     var mCurrentLevel = 0
     var mClipDrawable: ClipDrawable? = null
+    var count = 0
+    var answer = ""
     lateinit var answersContainer: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +51,9 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
 
         for (i in 0..answersContainer.childCount) {
             answersContainer.getChildAt(i)?.setOnClickListener {
+
                 checkAnswer(it as Button)
+
 
             }
 
@@ -56,7 +61,6 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
 
         buttonNext.setOnClickListener {
             if (currentQuestion < listOfTests.size - 1) {
-//                mCurrentLevel = 0
                 currentQuestion++
                 txtQuestion.text = listOfTests[currentQuestion].question
                 btnAnswer1.text = listOfTests[currentQuestion].answer1
@@ -64,17 +68,20 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
                 btnAnswer3.text = listOfTests[currentQuestion].answer3
                 btnAnswer4.text = listOfTests[currentQuestion].answer4
                 enableAnswersButton(true)
+                count = 0
 
             } else {
                 Toast.makeText(this, "finish", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     fun checkAnswer(selectedAnswer: Button) {
         enableAnswersButton(false)
 
-        if (btnAnswer1.text.toString() == listOfTests[currentQuestion].rightAnswer) {
+        if (selectedAnswer.text.toString().equals(listOfTests[currentQuestion].rightAnswer)) {
+            Log.i("hhhhhhhhh", "$count ${selectedAnswer.text} true")
             val layerDrawable = selectedAnswer.background as LayerDrawable
             mClipDrawable =
                 layerDrawable.findDrawableByLayerId(R.id.clip_drawable_true) as ClipDrawable
@@ -82,7 +89,7 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
             mAnimator = TimeAnimator()
             mAnimator!!.setTimeListener(this)
 
-            btnAnswer1.setOnClickListener {
+            selectedAnswer.setOnClickListener {
                 if (!mAnimator!!.isRunning) {
                     mCurrentLevel = 0;
                     mAnimator!!.start()
@@ -90,6 +97,7 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
 
             }
         } else {
+            Log.i("hhhhhhhhh", "$count ${selectedAnswer.text} false")
 
 //            val rightAnswer = answersContainer.findViewWithTag<Button>(listOfTests[currentQuestion].rightAnswer)
             val layerDrawable = selectedAnswer.background as LayerDrawable
@@ -100,7 +108,7 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
             mAnimator!!.setTimeListener(this)
 
 
-            btnAnswer1.setOnClickListener {
+            selectedAnswer.setOnClickListener {
 
                 if (!mAnimator!!.isRunning) {
                     mCurrentLevel = 0;
@@ -111,83 +119,11 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
 
         }
 
-        if (btnAnswer2.text.toString() == listOfTests[currentQuestion].rightAnswer) {
-            val layerDrawable = selectedAnswer.background as LayerDrawable
-            mClipDrawable =
-                layerDrawable.findDrawableByLayerId(R.id.clip_drawable_true) as ClipDrawable
-
-            mAnimator = TimeAnimator()
-            mAnimator!!.setTimeListener(this)
-
-            btnAnswer2.setOnClickListener {
-                if (!mAnimator!!.isRunning) {
-                    mCurrentLevel = 0;
-                    mAnimator!!.start()
-                }
-
-            }
-        } else {
-
-//            val rightAnswer = answersContainer.findViewWithTag<Button>(listOfTests[currentQuestion].rightAnswer)
-            val layerDrawable = selectedAnswer.background as LayerDrawable
-            mClipDrawable =
-                layerDrawable.findDrawableByLayerId(R.id.clip_drawable_false) as ClipDrawable
-
-            mAnimator = TimeAnimator()
-            mAnimator!!.setTimeListener(this)
-
-
-            btnAnswer2.setOnClickListener {
-
-                if (!mAnimator!!.isRunning) {
-                    mCurrentLevel = 0;
-                    mAnimator!!.start()
-                }
-            }
-
-
-        }
-
-        if (btnAnswer3.text.toString() == listOfTests[currentQuestion].rightAnswer) {
-            val layerDrawable = selectedAnswer.background as LayerDrawable
-            mClipDrawable =
-                layerDrawable.findDrawableByLayerId(R.id.clip_drawable_true) as ClipDrawable
-
-            mAnimator = TimeAnimator()
-            mAnimator!!.setTimeListener(this)
-
-            btnAnswer3.setOnClickListener {
-                if (!mAnimator!!.isRunning) {
-                    mCurrentLevel = 0;
-                    mAnimator!!.start()
-                }
-
-            }
-        } else {
-
-//            val rightAnswer = answersContainer.findViewWithTag<Button>(listOfTests[currentQuestion].rightAnswer)
-            val layerDrawable = selectedAnswer.background as LayerDrawable
-            mClipDrawable =
-                layerDrawable.findDrawableByLayerId(R.id.clip_drawable_false) as ClipDrawable
-
-            mAnimator = TimeAnimator()
-            mAnimator!!.setTimeListener(this)
-
-
-            btnAnswer3.setOnClickListener {
-
-                if (!mAnimator!!.isRunning) {
-                    mCurrentLevel = 0;
-                    mAnimator!!.start()
-                }
-            }
-
-
-        }
 
     }
 
     override fun onTimeUpdate(animation: TimeAnimator?, totalTime: Long, deltaTime: Long) {
+        Log.i("hhhhhhhhh", "onUpdate")
         mClipDrawable!!.level = mCurrentLevel
         if (mCurrentLevel >= MAX_LEVEL) {
             mAnimator!!.cancel()
@@ -196,15 +132,21 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
         }
 
     }
+
     fun enableAnswersButton(enable: Boolean) {
         for (i in 0..4) {
             answersContainer.getChildAt(i)?.isEnabled = enable
-//            if (enable) {
-//                answersContainer.getChildAt(i)?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#D4D4D8"))
-//            }
-
+            if (enable) {
+                Log.i("hhhhh", "change")
+//                answersContainer.getChildAt(i)?.background = ResourcesCompat.getDrawable(
+//                    resources,
+//                    R.drawable.txt_view_background_animation,
+//                    null
+//                )
+            }
         }
     }
-
-
 }
+
+
+

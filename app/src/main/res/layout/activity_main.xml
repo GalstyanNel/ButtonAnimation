@@ -30,7 +30,7 @@
             android:textSize="12sp"/>
 
         <Button
-            android:id="@+id/btnAnswer4"
+            android:id="@+id/btnAnswer2"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_margin="5dp"
@@ -50,7 +50,7 @@
             android:textSize="12sp"/>
 
         <Button
-            android:id="@+id/btnAnswer2"
+            android:id="@+id/btnAnswer4"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_margin="5dp"
