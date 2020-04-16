@@ -1,19 +1,21 @@
 package com.example.correctandincorrectanweranimation
 
 import android.animation.TimeAnimator
+import android.graphics.Color
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.LayerDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.app.infideap.stylishwidget.view.AProgressBar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.min
 
 class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
 
+    private lateinit var iconMultiProgressBar: AProgressBar
     var listOfTests = arrayListOf<QuestionModel>()
     var currentQuestion = 0
     val LEVEL_INCREMENT = 1000
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         answersContainer = findViewById(R.id.answersContainer)
+        iconMultiProgressBar = findViewById<AProgressBar>(R.id.progressBar)
 
 
         listOfTests.apply {
@@ -68,6 +71,7 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
                     enableButtons(true)
                     answersContainer.isClickable = true
                     count = 0
+                    isSelected = false
                 } else {
                     Toast.makeText(this, "Select Answer", Toast.LENGTH_SHORT).show()
                 }
@@ -84,9 +88,18 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
 
         isSelected = true
         if (selectedAnswer.text.toString() == listOfTests[currentQuestion].rightAnswer) {
+            iconMultiProgressBar.addProgressValue(
+                iconMultiProgressBar.progressValue  + 25f,
+                Color.parseColor("#6aa869")
+            )
+
             rightAnswerFunc(selectedAnswer)
         } else {
             findAndShowRightAnswer()
+            iconMultiProgressBar.addProgressValue(
+                iconMultiProgressBar.progressValue + 25f,
+                Color.parseColor("#e93423")
+            )
 
             val layerDrawable = selectedAnswer.background as LayerDrawable
             mClipDrawable =
@@ -94,17 +107,16 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
             if (!mAnimator!!.isRunning) {
                 mAnimator!!.start()
             }
-
         }
+        iconMultiProgressBar.withAnimation(1000)
 
 
     }
 
     override fun onTimeUpdate(animation: TimeAnimator?, totalTime: Long, deltaTime: Long) {
-        Log.i("hhhhhhhhh", "onUpdate")
-        if(mClipDrawable != null)
+        if (mClipDrawable != null)
             mClipDrawable!!.level = mCurrentLevel
-        if(mRightClipDrawable != null)
+        if (mRightClipDrawable != null)
             mRightClipDrawable!!.level = mCurrentLevel
         if (mCurrentLevel >= MAX_LEVEL) {
             mAnimator!!.cancel()
@@ -118,16 +130,15 @@ class MainActivity : AppCompatActivity(), TimeAnimator.TimeListener {
         for (i in 0..4) {
             answersContainer.getChildAt(i)?.isClickable = enable
             if (enable) {
-                if(mClipDrawable != null)
+                if (mClipDrawable != null)
                     mClipDrawable!!.level = 0
-                if(mRightClipDrawable != null)
+                if (mRightClipDrawable != null)
                     mRightClipDrawable!!.level = 0
             }
         }
     }
 
     fun findAndShowRightAnswer() {
-        Log.e("childCount", answersContainer.childCount.toString())
         for (i in 0..4) {
             when (listOfTests[currentQuestion].rightAnswer) {
                 btnAnswer1.text.toString() -> {
