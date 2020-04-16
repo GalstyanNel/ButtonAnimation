@@ -79,6 +79,20 @@
         app:layout_constraintGuide_begin="20dp"
         app:layout_constraintGuide_percent="0.5" />
 
+    <com.app.infideap.stylishwidget.view.AProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        ads:layout_constraintEnd_toEndOf="parent"
+        ads:layout_constraintStart_toStartOf="parent"
+        ads:layout_constraintTop_toTopOf="parent"
+        app:sw_maxValue="100"
+        app:sw_progressBackground="#ccc"
+        app:sw_progressColor="#ccc"
+        app:sw_progressTextStyle="bold"
+        app:sw_radius="7dp"
+        app:sw_withAnimation="true" />
+
     <TextView
         android:id="@+id/txtQuestion"
         android:layout_width="match_parent"
